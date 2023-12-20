@@ -1,10 +1,10 @@
-const User = require('../models/user.js');
+const User = require('../models/user');
 
 const getUser = async(req, res) => {
   try {
     const users = await User.find({});
     return res.json(users);
-  } catch(err) {
+  } catch (err) {
     res.status(500).json({ message: err.message });
   }
 }
@@ -12,8 +12,8 @@ const getUser = async(req, res) => {
 const getUserById = async(req, res) => {
   try {
     const users = await User.findById(req.params.userId);
-    return res.json(users)
-  } catch(err) {
+    return res.json(users);
+  } catch (err) {
     res.status(500).json({ message: err.message });
   }
 }
@@ -24,7 +24,7 @@ const createUser = async(req, res) => {
     const user = new User({ name, about, avatar });
     const savedUser = await user.save();
     res.status(201).json(savedUser);
-  } catch(err) {
+  } catch (err) {
     res.status(400).json({ message: err.message });
   }
 }
@@ -35,7 +35,7 @@ const updateUserInfo = async(req, res) => {
     const user = await User.findByIdAndUpdate(req.params.userId,
       {name, about, avatar},
       {new: true});
-      if(!user) {
+      if (!user) {
         return res.status(404).json({ message: 'Пользователь не найден' });
       }
       return res.json(user);
@@ -50,11 +50,11 @@ const updateAvatar = async(req, res) => {
     const newAvatar = await User.findByIdAndUpdate(req.params.userId,
       {avatar},
       {new: true});
-      if(!newAvatar) {
+      if (!newAvatar) {
         return res.status(404).json({ message: 'Пользователь не найден' });
       }
       return res.json(newAvatar);
-  } catch(err) {
+  } catch (err) {
     res.status(400).json({ message: err.message });
   }
 }
@@ -64,5 +64,5 @@ module.exports = {
   createUser,
   getUserById,
   updateUserInfo,
-  updateAvatar
+  updateAvatar,
 }

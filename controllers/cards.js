@@ -1,10 +1,10 @@
-const Card = require('../models/card.js');
+const Card = require('../models/card');
 
-const getCards = async(req, res) => {
+const getCards = async (req, res) => {
   try {
     const card = await Card.find({});
     return res.json(card);
-  } catch(err) {
+  } catch (err) {
     res.status(500).json({ message: err.message });
   }
 }
@@ -15,7 +15,7 @@ const createCard = async(req, res) => {
     const card = new Card({ name, link, owner: req.user._id });
     const savedCard = await card.save();
     res.status(201).json(savedCard);
-  } catch(err) {
+  } catch (err) {
     res.status(400).json({ message: err.message });
   }
 }
@@ -23,11 +23,11 @@ const createCard = async(req, res) => {
 const deleteCard = async(req, res) => {
   try {
     const card = await Card.findByIdAndDelete(req.params.cardId);
-    if(!card) {
+    if (!card) {
       return res.status(404).json({ message: 'Карточки нет' });
     }
     return res.json({ message: 'Карточка удалена' });
-  } catch(err) {
+  } catch (err) {
     res.status(400).json({ message: err.message });
   }
 }
@@ -38,26 +38,26 @@ const likedCard = async(req, res) => {
       { $addToSet: { likes: req.user._id } },
       { new: true }
       );
-      if(!card) {
+      if (!card) {
         return res.status(404).json({ message: 'Карточки нет' });
       }
       return res.json(card);
-  } catch(err) {
+  } catch (err) {
     res.status(400).json({ message: err.message });
   }
 }
 
-const deleteLike = async(req, res) => {
+const deleteLike = async (req, res) => {
   try {
     const card = await Card.findByIdAndUpdate(req.params.cardId,
       { $pull: { likes: req.user._id } },
       { new: true }
       );
-      if(!card) {
+      if (!card) {
         return res.status(404).json({ message: 'Карточки нет' });
       }
       return res.json(card);
-  } catch(err) {
+  } catch (err) {
     res.status(400).json({ message: err.message });
   }
 }
@@ -67,5 +67,5 @@ module.exports = {
   createCard,
   deleteCard,
   likedCard,
-  deleteLike
+  deleteLike,
 }
