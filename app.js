@@ -25,9 +25,8 @@ app.use('/', cardRoutes);
 
 app.use((req, res) => {
   res.status(404).send({ message: 'Неверный путь' });
-})
+});
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
-})
-
+});
