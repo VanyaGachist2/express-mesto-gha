@@ -39,9 +39,9 @@ module.exports.updateUserInfo = async(req, res) => {
       {name, about, avatar},
       {new: true});
       if (!user) {
-        return res.status(404).json({ message: 'Пользователь не найден' });
+        return res.status(400).json({ message: 'Пользователь не найден' });
       }
-      return res.json(user);
+      return res.status(200).json(user);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -56,7 +56,7 @@ module.exports.updateAvatar = async(req, res) => {
       if (!newAvatar) {
         return res.status(404).json({ message: 'Пользователь не найден' });
       }
-      return res.json(newAvatar);
+      return res.status(200).json(newAvatar);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

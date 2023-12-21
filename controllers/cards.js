@@ -41,7 +41,7 @@ module.exports.likedCard = async(req, res) => {
       if (!card) {
         return res.status(404).json({ message: 'Карточки нет' });
       };
-      return res.json(card);
+      return res.status(200).json(card);
   } catch (err) {
     return res.status(400).json({ message: err.message });
   }
