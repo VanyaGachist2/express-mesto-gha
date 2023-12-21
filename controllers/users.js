@@ -61,10 +61,10 @@ module.exports.updateAvatar = async(req, res) => {
       { avatar },
       { new: true });
       console.log(newAvatar);
-      if (!newAvatar) {
-        return res.status(404).json({ message: 'Пользователь не найден' });
+      if (newAvatar) {
+        return res.status(200).json(newAvatar);
       }
-      return res.status(200).json(newAvatar);
+        return res.status(404).json({ message: 'Пользователь не найден' });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

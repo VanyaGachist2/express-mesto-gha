@@ -17,8 +17,8 @@ const users = mongoose.Schema({
   avatar: {
     type: String,
     validate: {
-      validator: (v) => validator.isURL(v),
-      message: 'Некоректный url',
+      validator: (u) => validator.isURL(u),
+      message: 'некорректный url'
     },
     required: {value: true, message: 'avatar должен быть заполнен'},
   },
