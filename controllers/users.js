@@ -38,7 +38,7 @@ module.exports.createUser = async(req, res) => {
 module.exports.updateUserInfo = async(req, res) => {
   const { name, about } = req.body;
   try {
-    const user = await User.findByIdAndUpdate(req.params.userId,
+    const user = await User.findByIdAndUpdate(req.params._id,
       { name, about },
       {new: true});
       if (!user) {
@@ -49,9 +49,6 @@ module.exports.updateUserInfo = async(req, res) => {
     if (err.name === 'CastError') {
       return res.status(400).json({ message: 'некорректный id' })
     }
-    if(err.name === 'ValidationError') {
-      return res.status(400).json({ message: 'неправильный ввод' });
-    }
     res.status(400).json({ message: err.message });
   }
 }
@@ -60,7 +57,7 @@ module.exports.updateAvatar = async(req, res) => {
   const { avatar } = req.body;
   console.log(avatar);
   try {
-    const newAvatar = await User.findByIdAndUpdate(req.params.userId,
+    const newAvatar = await User.findByIdAndUpdate(req.params._id,
       { avatar },
       { new: true });
       console.log(newAvatar);
