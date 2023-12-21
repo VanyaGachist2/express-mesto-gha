@@ -17,6 +17,9 @@ module.exports.getUserById = async(req, res) => {
     }
     return res.json(users);
   } catch (err) {
+    if (err.name === 'CastError') {
+      return res.status(400).json({ message: 'Некорректный id'});
+    }
     res.status(500).json({ message: err.message });
   }
 }
@@ -43,16 +46,21 @@ module.exports.updateUserInfo = async(req, res) => {
       }
       return res.status(200).json(user);
   } catch (err) {
+    if (err.name === 'CastError') {
+      return res.status(400).json({ message: 'некорректный id' })
+    }
     res.status(400).json({ message: err.message });
   }
 }
 
 module.exports.updateAvatar = async(req, res) => {
   const { avatar } = req.body;
+  console.log(avatar);
   try {
     const newAvatar = await User.findByIdAndUpdate(req.params.userId,
       { avatar },
       { new: true });
+      console.log(newAvatar);
       if (!newAvatar) {
         return res.status(404).json({ message: 'Пользователь не найден' });
       }
