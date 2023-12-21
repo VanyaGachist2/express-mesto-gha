@@ -38,34 +38,36 @@ module.exports.createUser = async(req, res) => {
 module.exports.updateUserInfo = async(req, res) => {
   const { name, about } = req.body;
   try {
-    const user = await User.findByIdAndUpdate(req.params._id,
+    const user = await User.findByIdAndUpdate(req.params.userId,
       { name, about },
-      {new: true});
+      {new: true, runValidators: true });
       if (!user) {
-        return res.status(400).json({ message: 'Пользователь не найден' });
+        return res.status(404).json({ message: 'Пользователь не найден c' });
       }
       return res.status(200).json(user);
   } catch (err) {
-    if (err.name === 'CastError') {
+    if (err.name === 'ValidationError') {
       return res.status(400).json({ message: 'некорректный id' })
     }
-    res.status(400).json({ message: err.message });
+    return res.status(400).json({ message: err.message });
   }
 }
 
 module.exports.updateAvatar = async(req, res) => {
   const { avatar } = req.body;
-  console.log(avatar);
   try {
-    const newAvatar = await User.findByIdAndUpdate(req.params._id,
+    const newAvatar = await User.findByIdAndUpdate(req.params.userId,
       { avatar },
-      { new: true });
-      console.log(newAvatar);
-      if (newAvatar) {
-        return res.status(200).json(newAvatar);
+      { new: true, runValidators: true });
+      console.log(req.params.userId);
+      if (!newAvatar) {
+        return res.status(404).json({ message: 'Пользователь не найден c' });
       }
-        return res.status(404).json({ message: 'Пользователь не найден' });
+      return res.status(200).json(newAvatar);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    if(err.name === 'ValidationError') {
+      return res.status(400).json({ message: 'некорректные данные' });
+    }
+    return res.status(400).json({ message: err.message });
   }
 }
