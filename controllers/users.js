@@ -13,7 +13,7 @@ module.exports.getUserById = async(req, res) => {
   try {
     const users = await User.findById(req.params.userId);
     if (!users) {
-      return res.status(404).json({ message: 'Пользователь не найден'});
+      return res.status(400).json({ message: 'Пользователь не найден'});
     }
     return res.json(users);
   } catch (err) {
@@ -26,9 +26,9 @@ module.exports.createUser = async(req, res) => {
   try {
     const user = new User({ name, about, avatar });
     const savedUser = await user.save();
-    res.status(201).json(savedUser);
+    return res.status(201).json(savedUser);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    return res.status(400).json({ message: err.message });
   }
 }
 

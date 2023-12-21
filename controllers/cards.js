@@ -14,7 +14,7 @@ module.exports.createCard = async(req, res) => {
   try {
     const card = new Card({ name, link, owner: req.user._id });
     const savedCard = await card.save();
-    res.status(201).json(savedCard);
+    return res.status(201).json(savedCard);
   } catch (err) {
     return res.status(400).json({ message: err.message });
   }
@@ -26,7 +26,7 @@ module.exports.deleteCard = async(req, res) => {
     if (!card) {
       return res.status(404).json({ message: 'Карточки нет' });
     };
-    return res.json({ message: 'Карточка удалена' });
+    return res.status(200).json({ message: 'Карточка удалена' });
   } catch (err) {
     return res.status(400).json({ message: err.message });
   }
@@ -56,7 +56,7 @@ module.exports.deleteLike = async (req, res) => {
       if (!card) {
         return res.status(404).json({ message: 'Карточки нет' });
       };
-      return res.json(card);
+      return res.status(200).json(card);
   } catch (err) {
     return res.status(400).json({ message: err.message });
   }
