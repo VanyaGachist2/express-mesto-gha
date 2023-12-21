@@ -13,7 +13,7 @@ module.exports.getUserById = async(req, res) => {
   try {
     const users = await User.findById(req.params.userId);
     if (!users) {
-      return res.status(400).json({ message: 'Пользователь не найден'});
+      return res.status(404).json({ message: 'Пользователь не найден'});
     }
     return res.json(users);
   } catch (err) {
@@ -36,10 +36,10 @@ module.exports.createUser = async(req, res) => {
 }
 
 module.exports.updateUserInfo = async(req, res) => {
-  const { name, about, avatar } = req.body;
+  const { name, about } = req.body;
   try {
     const user = await User.findByIdAndUpdate(req.params.userId,
-      {name, about, avatar},
+      {name, about },
       {new: true});
       if (!user) {
         return res.status(400).json({ message: 'Пользователь не найден' });
