@@ -38,13 +38,14 @@ module.exports.createUser = async(req, res) => {
 module.exports.updateUserInfo = async(req, res) => {
   const { name, about } = req.body;
   try {
-    const user = await User.findByIdAndUpdate(req.user.userId,
+    const userId = req.user._id;
+    const user = await User.findByIdAndUpdate(userId,
       { name, about },
       { new: true });
       if (!user) {
         return res.status(404).json({ message: 'Пользователь не найден c' });
       }
-      return res.status(200).json(user);
+      return res.status(200).json({ name, about });
   } catch (err) {
     return res.status(400).json({ message: err.message });
   }
@@ -53,13 +54,14 @@ module.exports.updateUserInfo = async(req, res) => {
 module.exports.updateAvatar = async(req, res) => {
   const { avatar } = req.body;
   try {
-    const newAvatar = await User.findByIdAndUpdate(req.user.userId,
+    const userId = req.user._id;
+    const newAvatar = await User.findByIdAndUpdate(userId,
       { avatar },
       { new: true });
       if (!newAvatar) {
         return res.status(404).json({ message: 'Пользователь не найден c' });
       }
-      return res.status(200).json(newAvatar);
+      return res.status(200).json({ avatar });
   } catch (err) {
     return res.status(400).json({ message: err.message });
   }
