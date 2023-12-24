@@ -31,6 +31,9 @@ module.exports.createUser = async(req, res) => {
     const savedUser = await user.save();
     return res.status(201).json(savedUser);
   } catch (err) {
+    if(err.name === 'ValidationError') {
+      return res.status(400).json({ message: 'Некоррентные данные'});
+    }
     return res.status(500).json({ message: err.message });
   }
 }

@@ -26,6 +26,9 @@ module.exports.createCard = async(req, res) => {
     const savedCard = await card.save();
     return res.status(201).json(savedCard);
   } catch (err) {
+    if(err.name === 'ValidationError') {
+      return res.status(400).json({ message: 'Некоррентные данные'});
+    }
     return res.status(500).json({ message: err.message });
   }
 }
@@ -38,6 +41,9 @@ module.exports.deleteCard = async(req, res) => {
     };
     return res.status(200).json({ message: 'Карточка удалена' });
   } catch (err) {
+    if(err.name === 'CastError') {
+      return res.status(400).json({ message: 'проблемма с _id'});
+    }
     return res.status(500).json({ message: err.message });
   }
 };
@@ -53,6 +59,9 @@ module.exports.likedCard = async(req, res) => {
       };
       return res.status(200).json(card);
   } catch (err) {
+    if(err.name === 'CastError') {
+      return res.status(400).json({ message: 'Некоррентные данные'});
+    }
     return res.status(500).json({ message: err.message });
   }
 };
@@ -68,6 +77,9 @@ module.exports.deleteLike = async (req, res) => {
       };
       return res.status(200).json(card);
   } catch (err) {
+    if(err.name === 'CastError') {
+      return res.status(400).json({ message: 'Некоррентные данные'});
+    }
     return res.status(500).json({ message: err.message });
   }
 };
