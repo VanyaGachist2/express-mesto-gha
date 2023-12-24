@@ -1,4 +1,4 @@
-const { PORT = 3000 } = process.env;
+const { PORT = 3003 } = process.env;
 const express = require('express');
 const mongoose = require('mongoose');
 
@@ -19,7 +19,7 @@ app.use((req, res, next) => {
   };
 
   next();
-})
+});
 
 app.use('/', cardRoutes);
 

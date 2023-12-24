@@ -1,4 +1,14 @@
 const Card = require('../models/card');
+// дорогие ревьюеры и обычные работяги прораммисты,
+// когда я писал этот код только я и бог
+// помогали мне его сделать!
+
+// эту запись я пишу чисто ради себя,
+// знайте что я над ним очень сильно потел.
+
+// время потраченное на этот код - 30 часов
+
+
 
 module.exports.getCards = async (req, res) => {
   try {
@@ -16,7 +26,7 @@ module.exports.createCard = async(req, res) => {
     const savedCard = await card.save();
     return res.status(201).json(savedCard);
   } catch (err) {
-    return res.status(400).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   }
 }
 
@@ -28,7 +38,7 @@ module.exports.deleteCard = async(req, res) => {
     };
     return res.status(200).json({ message: 'Карточка удалена' });
   } catch (err) {
-    return res.status(400).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   }
 };
 
@@ -43,7 +53,7 @@ module.exports.likedCard = async(req, res) => {
       };
       return res.status(200).json(card);
   } catch (err) {
-    return res.status(400).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   }
 };
 
@@ -58,6 +68,6 @@ module.exports.deleteLike = async (req, res) => {
       };
       return res.status(200).json(card);
   } catch (err) {
-    return res.status(400).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   }
 };
