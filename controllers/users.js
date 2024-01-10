@@ -1,4 +1,6 @@
 const User = require('../models/user');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 module.exports.getUser = async(req, res) => {
   try {
@@ -24,18 +26,26 @@ module.exports.getUserById = async(req, res) => {
   }
 }
 
-module.exports.createUser = async(req, res) => {
-  const { name, about, avatar } = req.body;
-  try {
-    const user = new User({ name, about, avatar });
-    const savedUser = await user.save();
-    return res.status(201).json(savedUser);
-  } catch (err) {
-    if(err.name === 'ValidationError') {
-      return res.status(400).json({ message: 'Некоррентные данные'});
-    }
-    return res.status(500).json({ message: err.message });
-  }
+module.exports.createUser = async(req, res, next) => {
+  const { name, about, avatar, email, password } = req.body;
+  bcrypt.hash(password, 10)
+    .then((hash) => {
+      User.create({ name, about, avatar, email, password: hash });
+  })
+    .then(() => {
+      res.status(201).json({ name, about, avatar, email, });
+    })
+    .catch((err) => {
+      if(err.code === 11000) {
+        return res.status(409).json({ message: 'Такой email уже существует' });
+      }
+      if(err.name === 'ValidationError') {
+        return res.status(400).json({ message: 'Ошибка валидации' });
+      }
+      res.status(500).json({ message: err.message });
+      next();
+    })
+    .catch(next);
 }
 
 module.exports.updateUserInfo = async(req, res) => {
@@ -61,7 +71,7 @@ module.exports.updateUserInfo = async(req, res) => {
 module.exports.updateAvatar = async(req, res) => {
   const { avatar } = req.body;
   try {
-    const userId = req.user._id; // проблема с этим
+    const userId = req.user._id; 
     const newAvatar = await User.findByIdAndUpdate(userId,
       { avatar },
       { new: true, runValidators: true });
@@ -75,4 +85,19 @@ module.exports.updateAvatar = async(req, res) => {
     }
     return res.status(500).json({ message: err.message });
   }
+}
+
+module.exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      res.send({
+        token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' })
+      });
+    })
+    .catch((err) => {
+      res.status(401).json({ message: err.message });
+    })
+    .catch(next);
 }
