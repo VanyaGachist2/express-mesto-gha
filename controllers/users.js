@@ -33,7 +33,7 @@ module.exports.createUser = async(req, res, next) => {
       User.create({ name, about, avatar, email, password: hash });
   })
     .then(() => {
-      res.status(201).json({ name, about, avatar, email, });
+      return res.status(201).json({ name, about, avatar, email, });
     })
     .catch((err) => {
       if(err.code === 11000) {
@@ -42,8 +42,7 @@ module.exports.createUser = async(req, res, next) => {
       if(err.name === 'ValidationError') {
         return res.status(400).json({ message: 'Ошибка валидации' });
       }
-      res.status(500).json({ message: err.message });
-      next();
+      return res.status(500).json({ message: err.message });
     })
     .catch(next);
 }
@@ -90,14 +89,38 @@ module.exports.updateAvatar = async(req, res) => {
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
-  return User.findUserByCredentials(email, password)
+  return this.findOne({ email }).select('+password')
     .then((user) => {
-      res.send({
-        token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' })
-      });
+      if(!user) {
+        return res.status(401).json({ message: 'Неправильные почта или пароль' }) 
+      }
+
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if(!matched) {
+            return res.status(401).json({ message: 'Неправильные почта или пароль' });
+          }
+          return res.status(201).send({
+            message: 'Успешно авторизован',
+            token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' })
+          });
+        }) 
     })
     .catch((err) => {
-      res.status(401).json({ message: err.message });
+      return res.status(401).json({ message: err.message });
     })
     .catch(next);
 }
+
+
+
+// return User.findUserByCredentials(email, password)
+// .then((user) => {
+//    res.send({
+//      token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' })
+//    });
+//  })
+//  .catch((err) => {
+//    res.status(401).json({ message: err.message });
+//  })
+//  .catch(next);
