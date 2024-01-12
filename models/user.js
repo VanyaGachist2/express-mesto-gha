@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
-const validator = require('validator');
-const { default: isEmail } = require('validator/lib/isEmail');
-const { default: isURL } = require('validator/lib/isURL');
 const bcrypt = require('bcrypt');
+const validator = require('validator');
 
 const users = mongoose.Schema({
   name: {
@@ -19,20 +17,20 @@ const users = mongoose.Schema({
   },
   avatar: {
     type: String,
-    validate: {
-      validator: (u) => isURL(u),
-      message: 'неправильная ссылка на аватар'
-    },
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+    validate: {
+      validator: (u) => validator.isURL(u),
+      message: "неправильная ссылка",
+    }
   },
   email: {
     type: String,
     unique: true,
     required: true,
     validate: {
-      validator: (v) => isEmail(v),
-      message: 'Некорректные данные'
-    },
+      validator: (e) => validator.isEmail(e),
+      message: 'неправильная почта',
+    }
   },
   password: {
     type: String,
@@ -43,15 +41,15 @@ const users = mongoose.Schema({
 });
 
 users.statics.findUserByCredentials = function(email, password) {
-  return this.findOne({ email })
+  return this.findOne({ email }).select('+password')
     .then((user) => {
       if(!user) {
-        return Promise.reject(new Error('Неправильные почта или пароль'));
+        return res.status(401).json({ message: 'Неправильные почта или пароль' }) // Promise.reject(new Error('Неправильные почта или пароль'));
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if(!matched) {
-            return Promise.reject(new Error('Неправильные почта или пароль'));
+            return res.status(401).json({ message: 'Неправильные почта или пароль' });
           }
 
           return user;
@@ -60,3 +58,9 @@ users.statics.findUserByCredentials = function(email, password) {
 }
 
 module.exports = new mongoose.model('user', users);
+
+
+// validate: {
+//  validator: (u) => isURL(u),
+//  message: 'неправильная ссылка на аватар'
+// },
