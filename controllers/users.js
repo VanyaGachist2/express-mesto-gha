@@ -100,7 +100,7 @@ module.exports.login = (req, res, next) => {
           if(!matched) {
             return res.status(401).json({ message: 'Неправильные почта или пароль' });
           }
-          return res.status(201).send({
+          return res.status(200).send({
             message: 'Успешно авторизован',
             token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' })
           });
