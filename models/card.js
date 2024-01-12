@@ -4,7 +4,7 @@ const validator = require('validator');
 const cards = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'поле name должно быть заполнено'],
+    required: true,
     minlength: [2, 'минимальная длинна 2'],
     maxlength: [30, 'максимальная длинна 30'],
   },
@@ -14,7 +14,7 @@ const cards = new mongoose.Schema({
       validator: (v) => validator.isURL(v),
       message: 'Некоректный url',
     },
-    required: [true, 'обязательно ссылку на фото'],
+    required: true,
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,

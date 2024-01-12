@@ -4,8 +4,6 @@ const { default: isEmail } = require('validator/lib/isEmail');
 const { default: isURL } = require('validator/lib/isURL');
 const bcrypt = require('bcrypt');
 
-const regularAvatar = /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;
-
 const users = mongoose.Schema({
   name: {
     type: String,
@@ -22,7 +20,7 @@ const users = mongoose.Schema({
   avatar: {
     type: String,
     validate: {
-      validator: (u) => isURL(u) && regularAvatar,
+      validator: (u) => isURL(u),
       message: 'неправильная ссылка на аватар'
     },
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
@@ -30,7 +28,7 @@ const users = mongoose.Schema({
   email: {
     type: String,
     unique: true,
-    required: {value: true, message: 'Поле email должно быть заполнено'},
+    required: true,
     validate: {
       validator: (v) => isEmail(v),
       message: 'Некорректные данные'
@@ -38,7 +36,7 @@ const users = mongoose.Schema({
   },
   password: {
     type: String,
-    required: {value: true, message: 'поле password должно быть заполнено'},
+    required: true,
     minlength: 8,
     select: false,
   },
