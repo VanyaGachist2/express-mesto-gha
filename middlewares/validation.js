@@ -1,6 +1,6 @@
 const { Joi, celebrate } = require('celebrate');
 
-const valid = /^(http:\/\/|https:\/\/)(www\.)?[a-zA-Z0-9\-._~:/?#[\]@!$&'()*+,;=]+#?$/;
+const valid = /^(https?:\/\/)?([\w-]{1,32}\.[\w-]{1,32})[^\s@]*/;
 
 module.exports.validationCreateUser = celebrate({
   body: Joi.object().keys({
