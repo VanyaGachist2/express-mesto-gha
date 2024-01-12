@@ -24,11 +24,12 @@ app.use(auth);
 
 app.use('/', userRoutes);
 app.use('/', cardRoutes);
+
+app.use(errors());
+
 app.use((req, res) => {
   res.status(404).send({ message: 'Неверный путь' });
 });
-
-app.use(errors());
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
