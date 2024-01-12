@@ -30,21 +30,21 @@ module.exports.createUser = async(req, res, next) => {
   const { name, about, avatar, email, password } = req.body;
   bcrypt.hash(password, 10)
     .then((hash) => {
-      User.create({ name, about, avatar, email, password: hash });
+      User.create({ name, about, avatar, email, password: hash })
+      .then(() => {
+        return res.status(201).json({ name, about, avatar, email, });
+      })
+      .catch((err) => {
+        if(err.code === 11000) {
+          return res.status(409).json({ message: 'Такой email уже существует' });
+        }
+        if(err.name === 'ValidationError') {
+          return res.status(400).json({ message: 'Ошибка валидации' });
+        }
+        return res.status(500).json({ message: err.message });
+      })
   })
-    .then(() => {
-      return res.status(201).json({ name, about, avatar, email, });
-    })
-    .catch((err) => {
-      if(err.code === 11000) {
-        return res.status(409).json({ message: 'Такой email уже существует' });
-      }
-      if(err.name === 'ValidationError') {
-        return res.status(400).json({ message: 'Ошибка валидации' });
-      }
-      return res.status(500).json({ message: err.message });
-    })
-    .catch(next);
+  .catch(next);
 }
 
 module.exports.updateUserInfo = async(req, res) => {
