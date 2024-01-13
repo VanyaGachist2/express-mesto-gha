@@ -89,7 +89,7 @@ module.exports.updateAvatar = async(req, res) => {
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
-  return this.findOne({ email }).select('+password')
+  return User.findOne({ email }).select('+password')
     .then((user) => {
       if(!user) {
         return res.status(401).json({ message: 'Неправильные почта или пароль' }) 
