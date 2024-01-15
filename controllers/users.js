@@ -18,8 +18,12 @@ module.exports.getOneUser = async(req, res) => {
       return res.status(404).json({ message: 'такого пользователя нет' });
     }
     const { _id, name, about, avatar, email } = user;
-    const forrmat = { "_id": _id, "name": name, "about": about, "avatar": avatar, "email": email };
-    return res.status(200).json(forrmat);
+    const forrmat = { "_id": _id, 
+    "name": name, 
+    "about": about, 
+    "avatar": avatar, 
+    "email": email };
+    return res.status(200).json([forrmat]);
   } catch(err) {
     if(err.name === 'CastError') {
       return res.status(400).json({ message: 'неккоректный id' });
