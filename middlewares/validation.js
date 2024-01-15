@@ -47,6 +47,6 @@ module.exports.validationCard = celebrate({
 
 module.exports.validationCardId = celebrate({
   body: Joi.object().keys({
-    userId: Joi.string().required().length(24),
+    CardId: Joi.string().required().length(24),
   })
 })
