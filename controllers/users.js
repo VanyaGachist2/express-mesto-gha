@@ -17,12 +17,12 @@ module.exports.getUserById = async(req, res) => {
     if (!users) {
       return res.status(404).json({ message: 'Пользователь не найден'});
     }
-    return res.json(users);
+    return res.status(200).json(users);
   } catch (err) {
     if (err.name === 'CastError') {
       return res.status(400).json({ message: 'Некорректный id'});
     }
-    res.status(500).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   }
 }
 
