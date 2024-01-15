@@ -34,7 +34,7 @@ module.exports.validationUserAvatar = celebrate({
 
 module.exports.validationUserId = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().required().length(23),
+    userId: Joi.string().required().length(24),
   })
 })
 
