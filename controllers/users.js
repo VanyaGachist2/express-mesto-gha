@@ -17,13 +17,10 @@ module.exports.getOneUser = async(req, res) => {
     if(!user) {
       return res.status(404).json({ message: 'такого пользователя нет' });
     }
-    const { _id, name, about, avatar, email } = user;
-    const forrmat = { "_id": _id, 
-    "name": name, 
-    "about": about, 
-    "avatar": avatar, 
-    "email": email };
-    return res.status(200).json([forrmat]);
+    const format = user.toObject();
+    delete format.password;
+    delete format.__v;
+    return res.status(200).json(format);
   } catch(err) {
     if(err.name === 'CastError') {
       return res.status(400).json({ message: 'неккоректный id' });
