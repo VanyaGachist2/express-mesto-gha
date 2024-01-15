@@ -3,6 +3,7 @@ const { getUser, getUserById, updateUserInfo, updateAvatar } = require('../contr
 const { validationUserInfo, validationUserAvatar, validationUserId } = require('../middlewares/validation.js');
 
 router.get('/users', getUser);
+router.get('/users/me', getUser);
 router.get('/users/:userId', validationUserId, getUserById);
 
 router.patch('/users/me', validationUserInfo, updateUserInfo);

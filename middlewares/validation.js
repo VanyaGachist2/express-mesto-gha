@@ -34,8 +34,8 @@ module.exports.validationUserAvatar = celebrate({
 
 module.exports.validationUserId = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().required().length(24),
-  })
+    userId: Joi.string().required().length(24), // length must be 24 characters long??
+  }) // idk как это исправить на автотестах
 })
 
 module.exports.validationCard = celebrate({
