@@ -55,6 +55,9 @@ module.exports.likedCard = async(req, res) => {
     if(err.name === 'CastError') {
       return res.status(400).json({ message: 'Некоррентные данные'});
     }
+    if(err.name === 'DocumentNotFoundError') {
+      return res.status(404).json({ message: 'такой карточки нет!' });
+    }
     return res.status(500).json({ message: err.message });
   }
 };
