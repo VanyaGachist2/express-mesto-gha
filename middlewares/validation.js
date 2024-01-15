@@ -1,7 +1,6 @@
 const { Joi, celebrate } = require('celebrate');
 
 const validURL = /^(https?:\/\/)?([\w-]{1,32}\.[\w-]{1,32})[^\s@]*/;
-const validId = /[0-9a-f]{24}/;
 
 module.exports.validationCreateUser = celebrate({
   body: Joi.object().keys({
@@ -35,7 +34,7 @@ module.exports.validationUserAvatar = celebrate({
 
 module.exports.validationUserId = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().required().regex(validId),
+    userId: Joi.string().required().length(24),
   })
 })
 
@@ -48,6 +47,6 @@ module.exports.validationCard = celebrate({
 
 module.exports.validationCardId = celebrate({
   body: Joi.object().keys({
-    userId: Joi.string().required().regex(validId),
+    userId: Joi.string().required().length(24),
   })
 })
