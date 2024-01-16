@@ -13,13 +13,12 @@ module.exports.getUser = async(req, res) => {
 
 module.exports.getOneUser = async(req, res) => {
   try {
-    const user = await User.findById(req.user._id, {
-      _id: _id, name: name, about: about, avatar: avatar, email: email,
-    }).select('-password');
+    const user = await User.findById(req.user._id);
     if(!user) {
       return res.status(404).json({ message: 'такого пользователя нет' });
     }
-    return res.status(200).json(user);
+    const { _id, name, about, avatar, email } = user;
+    return res.status(200).json({ _id, name, about, avatar, email });
   } catch(err) {
     if(err.name === 'CastError') {
       return res.status(400).json({ message: 'неккоректный id' });
