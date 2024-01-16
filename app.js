@@ -7,7 +7,7 @@ const cardRoutes = require('./routes/cards');
 const { login, createUser } = require('./controllers/users.js');
 const auth = require('./middlewares/auth.js');
 const { validationCreateUser, validationLogin } = require('./middlewares/validation.js');
-const NotFoundError = require('./errors/NotFoundError.js');
+const NotFoundError = require('./errors/NotFoundError.js'); // 404
 
 const app = express();
 
@@ -35,12 +35,6 @@ app.use((err, req, res, next) => {
   });
   next();
 })
-
-app.use((req, res, next) => {
-  return next(new NotFoundError('Неверный путь'));
-});
-
-
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
