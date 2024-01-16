@@ -28,13 +28,14 @@ module.exports.createCard = async(req, res, next) => { // +
 
 module.exports.deleteCard = async(req, res, next) => { // +
   try {
-    const card = await Card.findByIdAndDelete(req.params.cardId);
+    const card = await Card.findById(req.params.cardId);
     if (!card) {
       throw new NotFoundError('Карточки нет');
     }
     if(card.owner.toString() !== req.user._id) {
        throw new UserError('это не ваша карточка, удаление невозможно');
     }
+    await Card.findByIdAndDelete(req.params.cardId);
     return res.status(200).json({ message: 'Карточка удалена' });
   } catch (err) {
     if(err.name === 'CastError') {
