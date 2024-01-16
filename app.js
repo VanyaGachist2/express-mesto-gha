@@ -28,8 +28,8 @@ app.use('/', cardRoutes);
 
 app.use(errors());
 
-app.use((req, res) => {
-  throw new NotFoundError('Неверный путь');
+app.use((req, res, next) => {
+  next(new NotFoundError('Неверный путь'));
 });
 
 app.listen(PORT, () => {
