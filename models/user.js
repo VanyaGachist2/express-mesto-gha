@@ -34,15 +34,8 @@ const users = mongoose.Schema({
   password: {
     type: String,
     required: true,
-    minlength: 8,
     select: false,
   },
 });
 
 module.exports = new mongoose.model('user', users);
-
-
-// validate: {
-//  validator: (u) => isURL(u),
-//  message: 'неправильная ссылка на аватар'
-// },
