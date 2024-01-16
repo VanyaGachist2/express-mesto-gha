@@ -28,7 +28,7 @@ module.exports.getOneUser = async(req, res) => { // ++
     if(err.name === 'CastError') {
       throw new BadRequestError('неккоректный id');
     }
-    return res.status(500).json({ message: err.message })
+    return next(err);
   }
 }
 
@@ -43,7 +43,7 @@ module.exports.getUserById = async(req, res) => { // +
     if (err.name === 'CastError') {
       throw new BadRequestError('Некорректный id');
     }
-    return res.status(500).json({ message: err.message });
+    return next(err);
   }
 }
 
@@ -62,7 +62,7 @@ module.exports.createUser = async(req, res, next) => { // +
         if(err.name === 'ValidationError') {
           return next(new BadRequestError('Ошибка валидации'));
         }
-        return res.status(500).json({ message: err.message });
+        return next(err);
       })
   })
   .catch(next);
@@ -84,7 +84,7 @@ module.exports.updateUserInfo = async(req, res) => {
     if(err.name === 'ValidationError') {
       throw new BadRequestError('неправильные данные'); // 400
     }
-    return res.status(500).json({ message: err.message });
+    return next(err);
   }
 }
 
@@ -103,7 +103,7 @@ module.exports.updateAvatar = async(req, res) => {
     if(err.name === 'ValidationError') {
       return res.status(400).json({ message: 'неправильные данные' });
     }
-    return res.status(500).json({ message: err.message });
+    return next(err);
   }
 }
 
@@ -125,7 +125,7 @@ module.exports.login = (req, res, next) => {
             message: 'Успешно авторизован',
             token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' })
           });
-        }) 
+        })
+        .catch(next);
     })
-    .catch(next);
 }

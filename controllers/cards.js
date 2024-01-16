@@ -22,7 +22,7 @@ module.exports.createCard = async(req, res) => { // +
     if(err.name === 'ValidationError') {
       throw new BadRequestError('Некоррентные данные');
     }
-    return res.status(500).json({ message: err.message });
+    return next(err);
   }
 };
 
@@ -40,7 +40,7 @@ module.exports.deleteCard = async(req, res) => { // +
     if(err.name === 'CastError') {
       throw new BadRequestError('проблемма с _id');
     }
-    return res.status(500).json({ message: err.message });
+    return next(err);
   }
 };
 
@@ -58,7 +58,7 @@ module.exports.likedCard = async(req, res) => {
     if(err.name === 'CastError') {
       throw new BadRequestError('Некоррентные данные');
     }
-    return res.status(500).json({ message: err.message });
+    return next(err);
   }
 };
 
@@ -76,6 +76,6 @@ module.exports.deleteLike = async (req, res) => { // +
     if(err.name === 'CastError') {
       throw new BadRequestError('Некоррентные данные');
     }
-    return res.status(500).json({ message: err.message });
+    return next(err);
   }
 };
