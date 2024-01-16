@@ -7,16 +7,16 @@ const ConflictError = require('../errors/ConflictError.js'); // 409
 const AuthError = require('../errors/AuthError.js'); // 401
 
 
-module.exports.getUser = async(req, res) => { // +
+module.exports.getUser = async(req, res, next) => { // +
   try {
     const users = await User.find({});
     return res.status(200).json(users);
   } catch (err) {
-    return res.status(500).json({ message: err.message });
+    return next(err);
   }
 }
 
-module.exports.getOneUser = async(req, res) => { // ++
+module.exports.getOneUser = async(req, res, next) => { // ++
   try {
     const user = await User.findById(req.user._id);
     if(!user) {
@@ -28,11 +28,11 @@ module.exports.getOneUser = async(req, res) => { // ++
     if(err.name === 'CastError') {
       throw new BadRequestError('неккоректный id');
     }
-    return res.status(500).json({ message: err.message })
+    return next(err);
   }
 }
 
-module.exports.getUserById = async(req, res) => { // +
+module.exports.getUserById = async(req, res, next) => { // +
   try {
     const users = await User.findById(req.params.userId);
     if (!users) {
@@ -43,7 +43,7 @@ module.exports.getUserById = async(req, res) => { // +
     if (err.name === 'CastError') {
       throw new BadRequestError('Некорректный id');
     }
-    return res.status(500).json({ message: err.message });
+    return next(err);
   }
 }
 
@@ -62,7 +62,7 @@ module.exports.createUser = async(req, res, next) => { // +
         if(err.name === 'ValidationError') {
           return next(new BadRequestError('Ошибка валидации'));
         }
-        return res.status(500).json({ message: err.message });
+        return next(err);
       })
   })
   .catch(next);
@@ -84,7 +84,7 @@ module.exports.updateUserInfo = async(req, res) => {
     if(err.name === 'ValidationError') {
       throw new BadRequestError('неправильные данные'); // 400
     }
-    return res.status(500).json({ message: err.message });
+    return next(err);
   }
 }
 
@@ -103,7 +103,7 @@ module.exports.updateAvatar = async(req, res) => {
     if(err.name === 'ValidationError') {
       return res.status(400).json({ message: 'неправильные данные' });
     }
-    return res.status(500).json({ message: err.message });
+    return next(err);
   }
 }
 

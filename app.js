@@ -28,9 +28,19 @@ app.use('/', cardRoutes);
 
 app.use(errors());
 
+app.use((err, req, res, next) => {
+  const { status = 500, message } = err;
+  res.status(status).json({
+    message: status === 500 ? 'Ошибка сервера' : message
+  });
+  next();
+})
+
 app.use((req, res, next) => {
   return next(new NotFoundError('Неверный путь'));
 });
+
+
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
