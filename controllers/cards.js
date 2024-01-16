@@ -22,7 +22,7 @@ module.exports.createCard = async(req, res) => { // +
     if(err.name === 'ValidationError') {
       throw new BadRequestError('Некоррентные данные');
     }
-    return next(err);
+    return res.status(500).json({ message: err.message });
   }
 };
 
@@ -33,14 +33,14 @@ module.exports.deleteCard = async(req, res) => { // +
       throw new NotFoundError('Карточки нет');
     }
     if(card.owner.toString() !== req.user._id) {
-      throw new UserError('это не ваша карточка, удаление невозможно');
+       throw new UserError('это не ваша карточка, удаление невозможно');
     }
     return res.status(200).json({ message: 'Карточка удалена' });
   } catch (err) {
     if(err.name === 'CastError') {
       throw new BadRequestError('проблемма с _id');
     }
-    return next(err);
+    return res.status(500).json({ message: err.message });
   }
 };
 
@@ -58,7 +58,7 @@ module.exports.likedCard = async(req, res) => {
     if(err.name === 'CastError') {
       throw new BadRequestError('Некоррентные данные');
     }
-    return next(err);
+    return res.status(500).json({ message: err.message });
   }
 };
 
@@ -76,6 +76,6 @@ module.exports.deleteLike = async (req, res) => { // +
     if(err.name === 'CastError') {
       throw new BadRequestError('Некоррентные данные');
     }
-    return next(err);
+    return res.status(500).json({ message: err.message });
   }
 };
