@@ -1,10 +1,10 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const NotFoundError = require('../errors/NotFoundError'); // 404
-const BadRequestError = require('../errors/BadRequestError'); // 400
-const ConflictError = require('../errors/ConflictError'); // 409
-const AuthError = require('../errors/AuthError'); // 401
+const NotFoundError = require('../errors/NotFoundError.js'); // 404
+const BadRequestError = require('../errors/BadRequestError.js'); // 400
+const ConflictError = require('../errors/ConflictError.js'); // 409
+const AuthError = require('../errors/AuthError.js'); // 401
 
 
 module.exports.getUser = async(req, res) => { // +
@@ -113,22 +113,19 @@ module.exports.login = (req, res, next) => {
   return User.findOne({ email }).select('+password')
     .then((user) => {
       if(!user) {
-        throw new AuthError('Неправильные почта или пароль');
+        return Promise.reject(new AuthError('Неправильные почта или пароль'));
       }
 
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if(!matched) {
-            throw new AuthError('Неправильные почта или пароль');
+            return Promise.reject(new AuthError('Неправильные почта или пароль'));
           }
           return res.status(200).send({
             message: 'Успешно авторизован',
             token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' })
           });
         }) 
-    })
-    .catch(() => {
-      return next(new AuthError('ошибка'));
     })
     .catch(next);
 }
