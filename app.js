@@ -7,6 +7,7 @@ const cardRoutes = require('./routes/cards');
 const { login, createUser } = require('./controllers/users.js');
 const auth = require('./middlewares/auth.js');
 const { validationCreateUser, validationLogin } = require('./middlewares/validation.js');
+const NotFoundError = require('./errors/NotFoundError.js');
 
 const app = express();
 
@@ -28,7 +29,7 @@ app.use('/', cardRoutes);
 app.use(errors());
 
 app.use((req, res) => {
-  res.status(404).send({ message: 'Неверный путь' });
+  throw new NotFoundError('Неверный путь');
 });
 
 app.listen(PORT, () => {
