@@ -1,8 +1,13 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const NotFoundError = require('../errors/NotFoundError'); // 404
+const BadRequestError = require('../errors/BadRequestError'); // 400
+const ConflictError = require('../errors/ConflictError'); // 409
+const AuthError = require('../errors/AuthError'); // 401
 
-module.exports.getUser = async(req, res) => {
+
+module.exports.getUser = async(req, res) => { // +
   try {
     const users = await User.find({});
     return res.status(200).json(users);
@@ -11,38 +16,38 @@ module.exports.getUser = async(req, res) => {
   }
 }
 
-module.exports.getOneUser = async(req, res) => {
+module.exports.getOneUser = async(req, res) => { // ++
   try {
     const user = await User.findById(req.user._id);
     if(!user) {
-      return res.status(404).json({ message: 'такого пользователя нет' });
+      throw new NotFoundError('такого пользователя нет');
     }
     const { _id, name, about, avatar, email } = user;
     return res.status(200).json({ _id, name, about, avatar, email });
   } catch(err) {
     if(err.name === 'CastError') {
-      return res.status(400).json({ message: 'неккоректный id' });
+      throw new BadRequestError('неккоректный id');
     }
     return res.status(500).json({ message: err.message })
   }
 }
 
-module.exports.getUserById = async(req, res) => {
+module.exports.getUserById = async(req, res) => { // +
   try {
     const users = await User.findById(req.params.userId);
     if (!users) {
-      return res.status(404).json({ message: 'Пользователь не найден'});
+      throw new NotFoundError('Пользователь не найден');
     }
     return res.status(200).json(users);
   } catch (err) {
     if (err.name === 'CastError') {
-      return res.status(400).json({ message: 'Некорректный id'});
+      throw new BadRequestError('Некорректный id');
     }
     return res.status(500).json({ message: err.message });
   }
 }
 
-module.exports.createUser = async(req, res, next) => {
+module.exports.createUser = async(req, res, next) => { // +
   const { name, about, avatar, email, password } = req.body;
   bcrypt.hash(password, 10)
     .then((hash) => {
@@ -52,10 +57,10 @@ module.exports.createUser = async(req, res, next) => {
       })
       .catch((err) => {
         if(err.code === 11000) {
-          return res.status(409).json({ message: 'Такой email уже существует' });
+          next(new ConflictError('Такой email уже существует')); // 409
         }
         if(err.name === 'ValidationError') {
-          return res.status(400).json({ message: 'Ошибка валидации' });
+          next(new BadRequestError('Ошибка валидации'));
         }
         return res.status(500).json({ message: err.message });
       })
@@ -72,12 +77,12 @@ module.exports.updateUserInfo = async(req, res) => {
       { name, about },
       { new: true, runValidators: true });
       if (!user) {
-        return res.status(404).json({ message: 'Пользователь не найден' });
+        throw new NotFoundError('Пользователь не найден');
       }
       return res.status(200).json(user);
   } catch (err) {
     if(err.name === 'ValidationError') {
-      return res.status(400).json({ message: 'неправильные данные' });
+      throw new BadRequestError('неправильные данные'); // 400
     }
     return res.status(500).json({ message: err.message });
   }
@@ -108,13 +113,13 @@ module.exports.login = (req, res, next) => {
   return User.findOne({ email }).select('+password')
     .then((user) => {
       if(!user) {
-        return res.status(401).json({ message: 'Неправильные почта или пароль' }) 
+        throw new AuthError('Неправильные почта или пароль');
       }
 
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if(!matched) {
-            return res.status(401).json({ message: 'Неправильные почта или пароль' });
+            throw new AuthError('Неправильные почта или пароль');
           }
           return res.status(200).send({
             message: 'Успешно авторизован',
@@ -122,21 +127,8 @@ module.exports.login = (req, res, next) => {
           });
         }) 
     })
-    .catch((err) => {
-      return res.status(401).json({ message: err.message });
+    .catch(() => {
+      next(new AuthError('ошибка'));
     })
     .catch(next);
 }
-
-
-
-// return User.findUserByCredentials(email, password)
-// .then((user) => {
-//    res.send({
-//      token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' })
-//    });
-//  })
-//  .catch((err) => {
-//    res.status(401).json({ message: err.message });
-//  })
-//  .catch(next);

@@ -1,4 +1,9 @@
 const Card = require('../models/card');
+const NotFoundError = require('../errors/NotFoundError'); // 404
+const BadRequestError = require('../errors/BadRequestError'); // 400
+const ConflictError = require('../errors/ConflictError'); // 409
+const AuthError = require('../errors/AuthError'); // 401
+const UserError = require('../errors/UserError'); // 403
 
 module.exports.getCards = async (req, res) => {
   try {
@@ -9,7 +14,7 @@ module.exports.getCards = async (req, res) => {
   }
 };
 
-module.exports.createCard = async(req, res) => {
+module.exports.createCard = async(req, res) => { // +
   const { name, link } = req.body;
   try {
     const card = new Card({ name, link, owner: req.user._id });
@@ -17,25 +22,25 @@ module.exports.createCard = async(req, res) => {
     return res.status(201).json(savedCard);
   } catch (err) {
     if(err.name === 'ValidationError') {
-      return res.status(400).json({ message: 'Некоррентные данные'});
+      throw new BadRequestError('Некоррентные данные');
     }
     return res.status(500).json({ message: err.message });
   }
 };
 
-module.exports.deleteCard = async(req, res) => {
+module.exports.deleteCard = async(req, res) => { // +
   try {
     const card = await Card.findByIdAndDelete(req.params.cardId);
     if (!card) {
-      return res.status(404).json({ message: 'Карточки нет' });
+      throw new NotFoundError('Карточки нет');
     }
     if(card.owner.toString() !== req.user._id) {
-      return res.status(403).json({ message: 'это не ваша карточка, удаление невозможно' });
+      throw new UserError('это не ваша карточка, удаление невозможно');
     }
     return res.status(200).json({ message: 'Карточка удалена' });
   } catch (err) {
     if(err.name === 'CastError') {
-      return res.status(400).json({ message: 'проблемма с _id'});
+      throw new BadRequestError('проблемма с _id');
     }
     return res.status(500).json({ message: err.message });
   }
@@ -48,12 +53,12 @@ module.exports.likedCard = async(req, res) => {
       { new: true }
       );
       if (!card) {
-        return res.status(404).json({ message: 'Карточки нет' });
+        throw new NotFoundError('Карточки нет');
       }
       return res.status(200).json(card);
   } catch (err) {
     if(err.name === 'CastError') {
-      return res.status(400).json({ message: 'Некоррентные данные'});
+      throw new BadRequestError('Некоррентные данные');
     }
     return res.status(500).json({ message: err.message });
   }
@@ -66,12 +71,12 @@ module.exports.deleteLike = async (req, res) => {
       { new: true }
       );
       if (!card) {
-        return res.status(404).json({ message: 'Карточки нет' });
+        throw new NotFoundError('Карточки нет');
       };
       return res.status(200).json(card);
   } catch (err) {
     if(err.name === 'CastError') {
-      return res.status(400).json({ message: 'Некоррентные данные'});
+      throw new BadRequestError('Некоррентные данные');
     }
     return res.status(500).json({ message: err.message });
   }
