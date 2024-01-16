@@ -57,10 +57,10 @@ module.exports.createUser = async(req, res, next) => { // +
       })
       .catch((err) => {
         if(err.code === 11000) {
-          next(new ConflictError('Такой email уже существует')); // 409
+          return next(new ConflictError('Такой email уже существует')); // 409
         }
         if(err.name === 'ValidationError') {
-          next(new BadRequestError('Ошибка валидации'));
+          return next(new BadRequestError('Ошибка валидации'));
         }
         return res.status(500).json({ message: err.message });
       })
@@ -128,7 +128,7 @@ module.exports.login = (req, res, next) => {
         }) 
     })
     .catch(() => {
-      next(new AuthError('ошибка'));
+      return next(new AuthError('ошибка'));
     })
     .catch(next);
 }

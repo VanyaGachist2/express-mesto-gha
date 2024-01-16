@@ -1,8 +1,6 @@
 const Card = require('../models/card');
 const NotFoundError = require('../errors/NotFoundError'); // 404
 const BadRequestError = require('../errors/BadRequestError'); // 400
-const ConflictError = require('../errors/ConflictError'); // 409
-const AuthError = require('../errors/AuthError'); // 401
 const UserError = require('../errors/UserError'); // 403
 
 module.exports.getCards = async (req, res) => {
@@ -64,7 +62,7 @@ module.exports.likedCard = async(req, res) => {
   }
 };
 
-module.exports.deleteLike = async (req, res) => {
+module.exports.deleteLike = async (req, res) => { // +
   try {
     const card = await Card.findByIdAndUpdate(req.params.cardId,
       { $pull: { likes: req.user._id } },

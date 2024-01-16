@@ -4,7 +4,7 @@ const AuthError = require('../errors/AuthError'); // 401
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    next(new AuthError('необходима регистрация'));
+    return next(new AuthError('необходима регистрация'));
   }
   const token = authorization.replace('Bearer ', '');
   let payload;

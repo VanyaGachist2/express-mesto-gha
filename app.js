@@ -29,7 +29,7 @@ app.use('/', cardRoutes);
 app.use(errors());
 
 app.use((req, res, next) => {
-  next(new NotFoundError('Неверный путь'));
+  return next(new NotFoundError('Неверный путь'));
 });
 
 app.listen(PORT, () => {
