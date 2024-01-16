@@ -26,6 +26,10 @@ app.use(auth);
 app.use('/', userRoutes);
 app.use('/', cardRoutes);
 
+app.use(() => {
+  throw new NotFoundError('Такой страницы нет');
+})
+
 app.use(errors());
 
 app.use((err, req, res, next) => {
@@ -35,6 +39,7 @@ app.use((err, req, res, next) => {
   });
   next();
 })
+
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
