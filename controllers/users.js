@@ -13,7 +13,9 @@ module.exports.getUser = async(req, res) => {
 
 module.exports.getOneUser = async(req, res) => {
   try {
-    const user = await User.findById(req.user._id).select('-password -__v');
+    const user = await User.findById(req.user._id, {
+      _id: _id, name: name, about: about, avatar: avatar, email: email,
+    }).select('-password');
     if(!user) {
       return res.status(404).json({ message: 'такого пользователя нет' });
     }
