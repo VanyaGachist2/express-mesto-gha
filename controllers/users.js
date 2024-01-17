@@ -26,7 +26,7 @@ module.exports.getOneUser = async(req, res, next) => { // ++
     return res.status(200).json({ _id, name, about, avatar, email });
   } catch(err) {
     if(err.name === 'CastError') {
-      throw new BadRequestError('неккоректный id');
+      return next(new BadRequestError('неккоректный id'));
     }
     return next(err);
   }
@@ -41,7 +41,7 @@ module.exports.getUserById = async(req, res, next) => { // +
     return res.status(200).json(users);
   } catch (err) {
     if (err.name === 'CastError') {
-      throw new BadRequestError('Некорректный id');
+      return next(new BadRequestError('Некорректный id'));
     }
     return next(err);
   }
@@ -82,7 +82,7 @@ module.exports.updateUserInfo = async(req, res) => {
       return res.status(200).json(user);
   } catch (err) {
     if(err.name === 'ValidationError') {
-      throw new BadRequestError('неправильные данные'); // 400
+      return next(new BadRequestError('неправильные данные'));
     }
     return next(err);
   }
@@ -96,12 +96,12 @@ module.exports.updateAvatar = async(req, res) => {
       { avatar },
       { new: true, runValidators: true });
       if (!newAvatar) {
-        return res.status(404).json({ message: 'Пользователь не найден c' });
+        throw new NotFoundError('Пользователь не найден');
       }
       return res.status(200).json(newAvatar);
   } catch (err) {
     if(err.name === 'ValidationError') {
-      return res.status(400).json({ message: 'неправильные данные' });
+      return next(new BadRequestError('неправильные данные'));
     }
     return next(err);
   }
@@ -126,9 +126,6 @@ module.exports.login = (req, res, next) => {
             token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' })
           });
         }) 
-    })
-    .catch(() => {
-      return next(new AuthError('ошибка'));
     })
     .catch(next);
 }
