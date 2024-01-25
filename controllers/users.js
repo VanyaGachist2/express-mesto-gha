@@ -5,6 +5,7 @@ const NotFoundError = require('../errors/NotFoundError.js'); // 404
 const BadRequestError = require('../errors/BadRequestError.js'); // 400
 const ConflictError = require('../errors/ConflictError.js'); // 409
 const AuthError = require('../errors/AuthError.js'); // 401
+const { NODE_ENV, JWT_SECRET } = process.env;
 
 
 module.exports.getUser = async(req, res, next) => { // +
@@ -49,6 +50,7 @@ module.exports.getUserById = async(req, res, next) => { // +
 
 module.exports.createUser = async(req, res, next) => { // +
   const { name, about, avatar, email, password } = req.body;
+  console.log(req.body)
   bcrypt.hash(password, 10)
     .then((hash) => {
       User.create({ name, about, avatar, email, password: hash })
@@ -123,7 +125,9 @@ module.exports.login = (req, res, next) => {
           }
           return res.status(200).send({
             message: 'Успешно авторизован',
-            token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' })
+            token: jwt.sign({ _id: user._id }, 
+            NODE_ENV === 'production' ? JWT_SECRET : 'super-strong-secret', 
+            { expiresIn: '7d' })
           });
         }) 
     })
